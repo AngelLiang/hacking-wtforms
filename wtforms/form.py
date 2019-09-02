@@ -93,7 +93,7 @@ class BaseForm(object):
                as a field will be overridden. Use with caution.
         """
         for name, field in iteritems(self._fields):
-            field.populate_obj(obj, name)
+            field.populate_obj(obj, name)  # class :fileld:`populate_obj` method
 
     def process(self, formdata=None, obj=None, data=None, **kwargs):
         """
@@ -149,7 +149,7 @@ class BaseForm(object):
                 extra = extra_validators[name]
             else:
                 extra = tuple()
-            if not field.validate(self, extra):
+            if not field.validate(self, extra):  # class :field:`validate`
                 success = False
         return success
 
