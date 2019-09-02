@@ -239,6 +239,9 @@ class Field(object):
         validators.
 
         :param form: The form the field belongs to.
+
+        预验证。
+        如果需要字段级别认证，重写它。在其他验证之前运行。
         """
         pass
 
@@ -250,6 +253,8 @@ class Field(object):
         :param form: The form the field belongs to.
         :param validation_stopped:
             `True` if any validator raised StopValidation.
+
+        如果需要在通用认证之后，执行一个字段级别认证任务，重写它。
         """
         pass
 
@@ -265,6 +270,10 @@ class Field(object):
         process_formdata and process_data methods. Only override this for
         special advanced processing, such as when a field encapsulates many
         inputs.
+
+
+        Field子类通常不会重写这个，取而代之的是重写 process_formdata 和 process_data
+        方法。
         """
         self.process_errors = []
         if data is unset_value:
@@ -276,7 +285,7 @@ class Field(object):
         self.object_data = data
 
         try:
-            self.process_data(data)
+            self.process_data(data)  # call process_data method
         except ValueError as e:
             self.process_errors.append(e.args[0])
 
@@ -287,12 +296,12 @@ class Field(object):
                 self.raw_data = []
 
             try:
-                self.process_formdata(self.raw_data)
+                self.process_formdata(self.raw_data)  # call process_formdata method
             except ValueError as e:
                 self.process_errors.append(e.args[0])
 
         try:
-            for filter in self.filters:
+            for filter in self.filters:  # call filters method list
                 self.data = filter(self.data)
         except ValueError as e:
             self.process_errors.append(e.args[0])
@@ -326,6 +335,9 @@ class Field(object):
 
         :note: This is a destructive operation. If `obj.<name>` already exists,
                it will be overridden. Use with caution.
+
+        注意：这是一个有破坏性的操作。如果 `obj.<name>` 已经存在，则会被重写。
+              请小心使用。
         """
         setattr(obj, name, self.data)
 

@@ -20,6 +20,7 @@ class UnsetValue(object):
     def __nonzero__(self):
         return False
 
+# 单例模式
 unset_value = UnsetValue()
 
 
