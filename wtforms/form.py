@@ -155,6 +155,10 @@ class BaseForm(object):
 
     @property
     def data(self):
+        """
+        form.data['field name 1']
+        form.data['field name 2']
+        """
         return dict((name, f.data) for name, f in iteritems(self._fields))
 
     @property
@@ -238,6 +242,8 @@ class Form(with_metaclass(FormMeta, BaseForm)):
 
     In addition, form and instance input data are taken at construction time
     and passed to `process()`.
+
+    另外，form和实例输入数据将在创建时期携带，并传给 `process()`
     """
     Meta = DefaultMeta
 
@@ -275,7 +281,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
             setattr(self, name, field)
-        self.process(formdata, obj, data=data, **kwargs)
+        self.process(formdata, obj, data=data, **kwargs)  # class :BaseForm:`process` method
 
     def __setitem__(self, name, value):
         raise TypeError('Fields may not be added to Form instances, only classes.')

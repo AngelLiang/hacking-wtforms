@@ -282,7 +282,7 @@ class Field(object):
             except TypeError:
                 data = self.default
 
-        self.object_data = data
+        self.object_data = data  # field.object_data
 
         try:
             self.process_data(data)  # call process_data method
@@ -291,7 +291,7 @@ class Field(object):
 
         if formdata is not None:
             if self.name in formdata:
-                self.raw_data = formdata.getlist(self.name)
+                self.raw_data = formdata.getlist(self.name)  # field.raw_data
             else:
                 self.raw_data = []
 
@@ -302,7 +302,7 @@ class Field(object):
 
         try:
             for filter in self.filters:  # call filters method list
-                self.data = filter(self.data)
+                self.data = filter(self.data)  # field.data
         except ValueError as e:
             self.process_errors.append(e.args[0])
 
