@@ -186,9 +186,13 @@ class Field(object):
 
         :param form: The form the field belongs to.
         :param extra_validators: A sequence of extra validators to run.
+
+        验证方法，调用顺序
+        - pre_validate
+        - post_validate
         """
         self.errors = list(self.process_errors)
-        stop_validation = False
+        stop_validation = False  # 是否停止验证
 
         # Call pre_validate
         try:
@@ -274,6 +278,10 @@ class Field(object):
 
         Field子类通常不会重写这个，取而代之的是重写 process_formdata 和 process_data
         方法。
+
+        调用顺序：
+        - process_data
+        - process_formdata
         """
         self.process_errors = []
         if data is unset_value:
