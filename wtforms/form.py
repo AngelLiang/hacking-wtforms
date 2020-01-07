@@ -19,6 +19,7 @@ class Form(object):
         # populate data from form and optional instance and defaults
         self.errors = {}
         self._fields = []
+
         has_formdata = bool(formdata)
         for name, f in self._unbound_fields:
             form_name = prefix + name
@@ -26,6 +27,7 @@ class Form(object):
             self._fields.append((name, field))
             setattr(self, name, field)
 
+            # 调用 field.process_data
             if name in kwargs:
                 field.process_data(kwargs[name], has_formdata)
             if hasattr(obj, name):
@@ -40,11 +42,14 @@ class Form(object):
         if '_unbound_fields' not in cls.__dict__:
             fields = []
             for name in dir(cls):
+                # 去除开头下划线的属性
                 if not name.startswith('_'):
                     field = getattr(cls, name)
                     if  hasattr(field, '_formfield'):
                         fields.append((name, field))
+            # 排序
             fields.sort(lambda x,y: cmp(x[1].creation_counter, y[1].creation_counter))
+            # 放入 _unbound_fields 类属性
             cls._unbound_fields = fields
         return super(Form, cls).__new__(cls, *args, **kw)
 
