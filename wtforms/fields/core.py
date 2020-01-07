@@ -187,9 +187,11 @@ class Field(object):
         :param form: The form the field belongs to.
         :param extra_validators: A sequence of extra validators to run.
 
+
         验证方法，调用顺序
-        - pre_validate
-        - post_validate
+        - pre_validate()
+        - _run_validation_chain()
+        - post_validate()
         """
         self.errors = list(self.process_errors)
         stop_validation = False  # 是否停止验证
@@ -244,6 +246,7 @@ class Field(object):
 
         :param form: The form the field belongs to.
 
+
         预验证。
         如果需要字段级别认证，重写它。在其他验证之前运行。
         """
@@ -257,6 +260,7 @@ class Field(object):
         :param form: The form the field belongs to.
         :param validation_stopped:
             `True` if any validator raised StopValidation.
+
 
         如果需要在通用认证之后，执行一个字段级别认证任务，重写它。
         """
@@ -276,8 +280,8 @@ class Field(object):
         inputs.
 
 
-        Field子类通常不会重写这个，取而代之的是重写 process_formdata 和 process_data
-        方法。
+        Field子类通常不会重写这个，取而代之的是重写 process_formdata 和
+        process_data 方法。
 
         调用顺序：
         - process_data
@@ -343,6 +347,7 @@ class Field(object):
 
         :note: This is a destructive operation. If `obj.<name>` already exists,
                it will be overridden. Use with caution.
+
 
         注意：这是一个有破坏性的操作。如果 `obj.<name>` 已经存在，则会被重写。
               请小心使用。
@@ -433,6 +438,9 @@ class SelectFieldBase(Field):
 
     This isn't a field, but an abstract base class for fields which want to
     provide this functionality.
+
+
+    可以通过迭代生成选项的 fileds 的基类
     """
     def __init__(self, label=None, validators=None, option_widget=None, **kwargs):
         super(SelectFieldBase, self).__init__(label, validators, **kwargs)
@@ -444,10 +452,15 @@ class SelectFieldBase(Field):
         """
         Provides data for choice widget rendering. Must return a sequence or
         iterable of (value, label, selected) tuples.
+
+
+        工厂方法，提供数据给choice widget渲染。必须返回一个序列或迭代，
+        其成员是 (value, label, selected) 类型的元组
         """
         raise NotImplementedError()
 
     def __iter__(self):
+        """客制化迭代修饰符，调用了 iter_choices() 方法 和 _Option() 类"""
         opts = dict(widget=self.option_widget, _name=self.name, _form=None, _meta=self.meta)
         for i, (value, label, checked) in enumerate(self.iter_choices()):
             opt = self._Option(label=label, id='%s-%d' % (self.id, i), **opts)

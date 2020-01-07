@@ -115,6 +115,9 @@ class BaseForm(object):
             If `formdata` is empty or not provided and `obj` does not contain
             an attribute named the same as a field, form will assign the value
             of a matching keyword argument to the field, if one exists.
+
+
+        把 form、对象数据和关键词参数输入并处理它们。
         """
         formdata = self.meta.wrap_formdata(self, formdata)
 
@@ -123,6 +126,8 @@ class BaseForm(object):
             #     Temporarily, this can simply be merged with kwargs.
             kwargs = dict(data, **kwargs)
 
+        # 处理每一个 field ，调用 field.process
+        # 先从 obj 获取数据，再从 kwargs 获取数据，最后从 formdata 获取数据
         for name, field, in iteritems(self._fields):
             if obj is not None and hasattr(obj, name):
                 field.process(formdata, getattr(obj, name))
@@ -243,6 +248,7 @@ class Form(with_metaclass(FormMeta, BaseForm)):
     In addition, form and instance input data are taken at construction time
     and passed to `process()`.
 
+
     另外，form和实例输入数据将在创建时期携带，并传给 `process()`
     """
     Meta = DefaultMeta
@@ -277,10 +283,13 @@ class Form(with_metaclass(FormMeta, BaseForm)):
             meta_obj.update_values(meta)
         super(Form, self).__init__(self._unbound_fields, meta=meta_obj, prefix=prefix)
 
+        # Form 初始化的时候，会迭代每一个 fields
         for name, field in iteritems(self._fields):
             # Set all the fields to attributes so that they obscure the class
             # attributes with the same names.
+            # 设置所有的 field 给实例属性，这样它们屏蔽了同名类属性
             setattr(self, name, field)
+        # 处理数据
         self.process(formdata, obj, data=data, **kwargs)  # class :BaseForm:`process` method
 
     def __setitem__(self, name, value):
